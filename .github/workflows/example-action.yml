@@ -1,0 +1,36 @@
+name: Example Action
+
+on:
+  issue_comment:
+    types: [created]
+  issues:
+    types: [opened, edited]
+  
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    if: ${{ !github.event.issue.pull_request }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Create PR when issue_comment event occured
+        if: ${{ startsWith(github.event.comment.body, '@pr ') }}
+        uses: ./ # Uses an action in the root directory
+        # or use a released GitHub Action
+        #uses: chyccs/pull-request-typography@master
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create PR when issues was created
+        if: ${{ !github.event.comment.body }}
+        uses: ./ # Uses an action in the root directory
+        # or use a released GitHub Action
+        #uses: chyccs/pull-request-typography@master
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
