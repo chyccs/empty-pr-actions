@@ -9,7 +9,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  create-issue:
+  create-issue-job:
     runs-on: ubuntu-latest
     steps:
       - id: create-issue
