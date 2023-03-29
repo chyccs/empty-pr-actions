@@ -16,7 +16,9 @@ jobs:
         run: |
           issue=$(gh issue create -a "@me" -t "test" -b " " -R "$GITHUB_REPOSITORY")
         shell: bash
-
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
   add_assignee:
     runs-on: ubuntu-latest
     steps:
