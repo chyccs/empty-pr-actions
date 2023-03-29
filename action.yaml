@@ -39,6 +39,7 @@ runs:
         echo "number=$(echo $issue | jq -r '.number')" >> $GITHUB_OUTPUT
         echo "title=$(echo $issue | jq -r '.title')" >> $GITHUB_OUTPUT
         echo "login=$(echo $issue | jq -r '.assignees[0].login')" >> $GITHUB_OUTPUT
+
       env:
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
         
