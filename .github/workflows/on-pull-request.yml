@@ -27,10 +27,10 @@ jobs:
           issue_url: ${{ steps.create-issue.outputs.issue_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  label:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/labeler@v4
-      continue-on-error: true
-      with:
-        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+  # label:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/labeler@v4
+  #     continue-on-error: true
+  #     with:
+  #       repo-token: "${{ secrets.GITHUB_TOKEN }}"
