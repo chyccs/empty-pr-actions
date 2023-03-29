@@ -30,18 +30,14 @@ fi
 echo "::debug::head_branch=$head_branch"
 echo "::debug::pull_request_title=$pull_request_title"
 
-# list=$(gh issue develop -l "$number")
-# echo "::debug::list=$list"
-gh issue develop -l "$number"
+gh issue develop -c "$number" --name "$head_branch" --base "$base_branch" --repo "$repo"
 result=$?
-echo "::debug::gh issue develop -l $number => $result"
-if [ $result -eq 1 ]
+echo "::debug::gh issue develop -c $number --name "$head_branch" --base $base_branch --repo $repo => $result"
+
+if [ $result -eq 0 ]
 then
-    gh issue develop -c "$number" --name "$head_branch" --base "$base_branch" --repo "$repo"
-    echo "::debug::gh issue develop -c $number --name $head_branch --base $base_branch --repo $repo"
-    
-    git checkout "$head_branch"
-    echo "::debug::git checkout $head_branch"
+    # git checkout "$head_branch"
+    # echo "::debug::git checkout $head_branch"
     git config --local user.email "$email"
     git config --local user.name "$owner"
     git commit --allow-empty -m "trigger notification\n[skip ci]"
