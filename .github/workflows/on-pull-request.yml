@@ -22,7 +22,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Create PR when issue_comment event occured
-        uses: chyccs/empty-pr-actions@fix-issue-to-could-not-run
+        uses: ./
         with:
           issue_url: ${{ steps.create-issue.outputs.issue_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
