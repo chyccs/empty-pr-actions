@@ -1,0 +1,44 @@
+name: Example Action
+
+on:
+  issue_comment:
+    types: [created]
+  issues:
+    types: [opened, edited]
+  
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: khan/pull-request-comment-trigger@v1.1.0
+        if: ${{ github.event.comment }}
+        id: check
+        with:
+          trigger: '@pr'
+          reaction: rocket
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+      
+      - name: Create PR when issue_comment event occured
+        if: steps.check.outputs.triggered == 'true'
+        uses: ./ # Uses an action in the root directory
+        # or use a released GitHub Action
+        #uses: chyccs/pull-request-typography@master
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create PR when issues was created
+        if: ${{ !github.event.comment }}
+        uses: ./ # Uses an action in the root directory
+        # or use a released GitHub Action
+        #uses: chyccs/pull-request-typography@master
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
