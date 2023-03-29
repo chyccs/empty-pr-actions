@@ -2,6 +2,7 @@ name: on-pull-request-action
 
 on:
   pull_request:
+    types: [opened, edited, reopened]
 
 permissions:
   contents: write
@@ -22,7 +23,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Create PR when issue_comment event occured
-        uses: chyccs/empty-pr-actions@50-fix-add-integration-test-action
+        uses: ./
         with:
           issue_url: ${{ steps.create-issue.outputs.issue_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
