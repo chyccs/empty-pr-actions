@@ -2,6 +2,7 @@ name: on-pull-request-action
 
 on:
   pull_request:
+    types: [opened, edited, reopened]
 
 permissions:
   contents: write
