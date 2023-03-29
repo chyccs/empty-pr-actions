@@ -15,7 +15,7 @@ jobs:
       - name: Create Issue
         run: |
           issue_url=$(gh issue create -t "test ${{ github.run_number }}" -b " " -R "$GITHUB_REPOSITORY")
-          gh issue lock $issue_url -r "integration test"
+          gh issue lock $issue_url -r "off_topic"
           echo $issue_url
         shell: bash
         env:
