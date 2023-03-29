@@ -14,17 +14,17 @@ jobs:
     steps:
       - name: Create Issue
         run: |
-          issue=$(gh issue create -t "test ${{ github.run_number }}" -b " " -R "$GITHUB_REPOSITORY")
-          echo $issue
+          issue_url=$(gh issue create -t "test ${{ github.run_number }}" -b " " -R "$GITHUB_REPOSITORY")
+          gh issue lock $issue_url -r "integration test"
+          echo $issue_url
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
-      # - name: Create Issue
-      #   run: |
-      #     issue=$(gh issue create -t "test" -b " " --label "test issue" -R "$GITHUB_REPOSITORY")
-      #   shell: bash
-      #   env:
+      # - name: Create PR when issue_comment event occured
+      #   if: ${{ startsWith(github.event.comment.body, '@pr ') }}
+      #   uses: ./
+      #   with:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   label:
