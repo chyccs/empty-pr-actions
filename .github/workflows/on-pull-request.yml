@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Create Issue
         run: |
-          issue=$(gh issue create -a "@me" -t "test" -b " " -r "$GITHUB_REPOSITORY")
+          issue=$(gh issue create -a "@me" -t "test" -b " " -R "$GITHUB_REPOSITORY")
         shell: bash
 
   add_assignee:
