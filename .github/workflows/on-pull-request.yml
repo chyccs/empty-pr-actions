@@ -22,7 +22,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Create PR when issue_comment event occured
-        uses: ./
+        uses: chyccs/empty-pr-actions@50-fix-add-integration-test-action
         with:
           issue_url: ${{ steps.create-issue.outputs.issue_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
