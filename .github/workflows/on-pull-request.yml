@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Create Issue
         run: |
-          issue=$(gh issue create -a "@me" -t "test" -b " " -R "$GITHUB_REPOSITORY")
+          issue=$(gh issue create -a "chyccs" -t "test" -b " " -R "$GITHUB_REPOSITORY")
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
