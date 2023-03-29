@@ -1,0 +1,32 @@
+name: on-pull-request-action
+
+on:
+  pull_request:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  create-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependencies
+        run: |
+          issue=$(gh issue create -a @me -t "test" -b " " -r $GITHUB_REPOSITORY)
+        shell: bash
+
+  add_assignee:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: kentaro-m/auto-assign-action@v1.2.1
+        continue-on-error: true
+
+  label:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/labeler@v4
+      continue-on-error: true
+      with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
