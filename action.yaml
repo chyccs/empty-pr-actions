@@ -52,9 +52,8 @@ runs:
     - name: run
       shell: bash
       run: |
-        cd ${{ github.action_path }}
-        chmod +x "./src/pull-request.sh"
-        ./src/pull-request.sh -n $number -o $owner -e $email -i "${{ github.event.issue.title }}" -r $GITHUB_REPOSITORY -l $login
+        chmod +x "${{ env.local_action_path }}/src/pull-request.sh"
+        ${{ env.local_action_path }}/src/pull-request.sh -n $number -o $owner -e $email -i "${{ github.event.issue.title }}" -r $GITHUB_REPOSITORY -l $login
       env:
         number: ${{ github.event.issue.number }}
         owner: ${{ inputs.assignee }}
