@@ -15,6 +15,7 @@ jobs:
       - name: Create Issue
         run: |
           issue=$(gh issue create -t "test ${{ github.run_number }}" -b " " -R "$GITHUB_REPOSITORY")
+          echo $issue
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
