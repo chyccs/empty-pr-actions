@@ -15,7 +15,7 @@ jobs:
       - id: create-issue
         run: |
           issue_url=$(gh issue create -t "test ${{ github.run_number }}" -b " " -R "$GITHUB_REPOSITORY")
-          gh issue close $issue_url
+          #gh issue close $issue_url
           echo "issue_url=$issue_url" >> $GITHUB_OUTPUT
         shell: bash
         env:
