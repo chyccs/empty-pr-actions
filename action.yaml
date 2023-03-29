@@ -1,0 +1,57 @@
+name: 'Empty PR Actions'
+
+description: 'GitHub Actions that automatically creates an empty pull request linked to an issue'
+
+branding:
+  icon: 'italic'
+  color: 'red'
+
+inputs:
+  assignee:
+    description: 'assignee'
+    required: false
+    default: ${{ github.event.issue.assignee.name }}
+
+  email:
+    description: 'email'
+    required: false
+    default: ${{ github.event.issue.assignee.email }}
+
+  GITHUB_TOKEN:
+    description: 'Github Token'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Move to path of action
+      run: |
+        cd ${{ github.action_path }}
+        pwd="$(pwd)"
+        echo "local_action_path=$pwd" >> $GITHUB_ENV
+      shell: bash
+
+    - id: cache-cargo
+      uses: actions/cache@v3
+      with:
+        path: ~/.cargo/bin/
+        key: ${{ runner.os }}-cargo
+
+    - name: Install dependencies
+      if: steps.cache-cargo.outputs.cache-hit != 'true'
+      run: |
+        cd ${{ github.action_path }}
+        cargo install ccase
+      shell: bash
+    
+    - name: run
+      shell: bash
+      run: |
+        cd ${{ github.action_path }}
+        chmod +x "./src/pull-request.sh"
+        ./src/pull-request.sh -n $number -o $owner -e $email -i "${{ github.event.issue.title }}" -r $GITHUB_REPOSITORY
+      env:
+        number: ${{ github.event.issue.number }}
+        owner: ${{ inputs.assignee }}
+        email: ${{ inputs.email }}
+        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
