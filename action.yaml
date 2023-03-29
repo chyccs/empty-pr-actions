@@ -17,21 +17,6 @@ inputs:
     required: false
     default: ${{ github.event.issue.number }}
 
-  assignee:
-    description: 'assignee'
-    required: false
-    default: ${{ github.event.issue.assignee.name }}
-
-  email:
-    description: 'email'
-    required: false
-    default: ${{ github.event.issue.assignee.email }}
-  
-  login:
-    description: 'login of assignee'
-    required: false
-    default: ${{ github.event.issue.assignee.login }}
-
   GITHUB_TOKEN:
     description: 'Github Token'
     required: true
