@@ -14,16 +14,17 @@ jobs:
     steps:
       - name: Create Issue
         run: |
-          issue=$(gh issue create -a "chyccs" -t "test" -b " " -R "$GITHUB_REPOSITORY")
+          issue=$(gh issue create -t "test ${{ github.run_number }}" -b " " --label "test issue" -R "$GITHUB_REPOSITORY")
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  
-  add_assignee:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: kentaro-m/auto-assign-action@v1.2.1
-        continue-on-error: true
+      
+      # - name: Create Issue
+      #   run: |
+      #     issue=$(gh issue create -t "test" -b " " --label "test issue" -R "$GITHUB_REPOSITORY")
+      #   shell: bash
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   label:
     runs-on: ubuntu-latest
