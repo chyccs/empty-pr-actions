@@ -30,7 +30,8 @@ fi
 echo "::debug::head_branch=$head_branch"
 echo "::debug::pull_request_title=$pull_request_title"
 
-gh issue develop -l "$number"
+list=$(gh issue develop -l "$number")
+echo "::debug::list=$list"
 if [ $? -eq 1 ]
 then
     gh issue develop -c "$number" --name "$head_branch" --base "$base_branch" --repo "$repo"
