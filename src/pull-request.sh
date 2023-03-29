@@ -1,6 +1,6 @@
 #! /bin/bash
 
-while getopts b:h:n:p:i:o:e:r: flag
+while getopts b:h:n:p:i:o:e:l:r: flag
 do
     case "${flag}" in
         b) base_branch=${OPTARG};;
@@ -10,6 +10,7 @@ do
         i) issue_title=${OPTARG};;
         o) owner=${OPTARG};;
         e) email=${OPTARG};;
+        l) login=${OPTARG};;
         r) repo=${OPTARG};;
     esac
 done
@@ -27,30 +28,35 @@ then
     contents=$(echo "$issue_title_converted" | sed 's/\(.*\)\:\(.*\)/\2/g')
     pull_request_title=$(echo "$tag: #$number $contents")
 fi
+
 echo "::debug::head_branch=$head_branch"
 echo "::debug::pull_request_title=$pull_request_title"
 
-# list=$(gh issue develop -l "$number")
-# echo "::debug::list=$list"
-gh issue develop -l "$number"
+gh issue develop -c "$number" --name "$head_branch" --base "$base_branch" --repo "$repo"
 result=$?
-echo "::debug::gh issue develop -l $number => $result"
-if [ $result -eq 1 ]
+echo "::debug::gh issue develop -c $number --name "$head_branch" --base $base_branch --repo $repo => $result"
+
+if [ $result -eq 0 ]
 then
-    gh issue develop -c "$number" --name "$head_branch" --base "$base_branch" --repo "$repo"
-    echo "::debug::gh issue develop -c $number --name $head_branch --base $base_branch --repo $repo"
-    
-    git checkout "$head_branch"
-    echo "::debug::git checkout $head_branch"
     git config --local user.email "$email"
     git config --local user.name "$owner"
     git commit --allow-empty -m "trigger notification\n[skip ci]"
     
     git push --set-upstream origin "$head_branch"
     echo "::debug::git push --set-upstream origin $head_branch"
+    
+    # if [ -z $login ]
+    # then
+    #     assignee=$(echo " -a $login")
+    # else  
+    #     assignee=""
+    # fi
 
-    gh pr create --title "$pull_request_title" --body " " --repo "$repo" --base "$base_branch" --head "$head_branch"
-    echo "::debug::gh pr create --title $pull_request_title --body ' ' --repo $repo --base $base_branch --head $head_branch"
+    new_pr=$(gh pr create --title "$pull_request_title" --repo "$repo" --base "$base_branch" --head "$head_branch" --body-file ".github/pull_request_template.md")
+    echo "::debug::gh pr create --title $pull_request_title --body ' ' --repo $repo --base $base_branch --head $head_branch --body-file '.github/pull_request_template.md'"
+
+    gh issue comment $number --body "Pull Request created. $new_pr" --repo $repo
 else
     echo "::debug::branch is already created"
+    gh issue comment $number --body "Can not create Pull Request. Branch is already exists" --repo $repo
 fi

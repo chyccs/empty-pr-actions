@@ -3,8 +3,8 @@ name: 'Empty PR Actions'
 description: 'GitHub Actions that automatically creates an empty pull request linked to an issue'
 
 branding:
-  icon: 'italic'
-  color: 'red'
+  icon: 'git-pull-request'
+  color: 'black'
 
 inputs:
   assignee:
@@ -16,6 +16,11 @@ inputs:
     description: 'email'
     required: false
     default: ${{ github.event.issue.assignee.email }}
+  
+  login:
+    description: 'login of assignee'
+    required: false
+    default: ${{ github.event.issue.assignee.login }}
 
   GITHUB_TOKEN:
     description: 'Github Token'
@@ -49,9 +54,10 @@ runs:
       run: |
         cd ${{ github.action_path }}
         chmod +x "./src/pull-request.sh"
-        ./src/pull-request.sh -n $number -o $owner -e $email -i "${{ github.event.issue.title }}" -r $GITHUB_REPOSITORY
+        ./src/pull-request.sh -n $number -o $owner -e $email -i "${{ github.event.issue.title }}" -r $GITHUB_REPOSITORY -l $login
       env:
         number: ${{ github.event.issue.number }}
         owner: ${{ inputs.assignee }}
         email: ${{ inputs.email }}
+        login: ${{ inputs.login }}
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
