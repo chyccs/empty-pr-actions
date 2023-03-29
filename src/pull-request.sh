@@ -1,6 +1,6 @@
 #! /bin/bash
 
-while getopts b:h:n:p:i:o:e:l:r: flag
+while getopts b:h:n:p:i:l:r: flag
 do
     case "${flag}" in
         b) base_branch=${OPTARG};;
@@ -8,8 +8,6 @@ do
         n) number=${OPTARG};;
         p) pull_request_title=${OPTARG};;
         i) issue_title=${OPTARG};;
-        o) owner=${OPTARG};;
-        e) email=${OPTARG};;
         l) login=${OPTARG};;
         r) repo=${OPTARG};;
     esac
@@ -38,19 +36,19 @@ echo "::debug::gh issue develop -c $number --name "$head_branch" --base $base_br
 
 if [ $result -eq 0 ]
 then
-    git config --local user.email "$email"
-    git config --local user.name "$owner"
+    git config --local user.email "app/github-actions"
+    git config --local user.name "app/github-actions"
     git commit --allow-empty -m "trigger notification\n[skip ci]"
     
     git push --set-upstream origin "$head_branch"
     echo "::debug::git push --set-upstream origin $head_branch"
     
-    # if [ -z $login ]
-    # then
-    #     assignee=$(echo " -a $login")
-    # else  
-    #     assignee=""
-    # fi
+    if [ -z $login ]
+    then
+        assignee=$(echo " -a $login")
+    else  
+        assignee=""
+    fi
 
     new_pr=$(gh pr create --title "$pull_request_title" --repo "$repo" --base "$base_branch" --head "$head_branch" --body-file ".github/pull_request_template.md")
     echo "::debug::gh pr create --title $pull_request_title --body ' ' --repo $repo --base $base_branch --head $head_branch --body-file '.github/pull_request_template.md'"

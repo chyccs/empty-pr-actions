@@ -7,20 +7,15 @@ branding:
   color: 'black'
 
 inputs:
-  assignee:
-    description: 'assignee'
+  issue_url:
+    description: 'url of issue'
     required: false
-    default: ${{ github.event.issue.assignee.name }}
-
-  email:
-    description: 'email'
-    required: false
-    default: ${{ github.event.issue.assignee.email }}
+    default: ${{ github.event.issue.issue_url }}
   
-  login:
-    description: 'login of assignee'
+  issue_number:
+    description: 'number of issue'
     required: false
-    default: ${{ github.event.issue.assignee.login }}
+    default: ${{ github.event.issue.number }}
 
   GITHUB_TOKEN:
     description: 'Github Token'
@@ -29,13 +24,31 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: Check Variables
+      if: inputs.issue_url == '' && inputs.issue_number == ''
+      shell: bash
+      run: |
+        echo "::error::issue can not be null"
+        exit 1
+    
+    - id: get-issue
+      shell: bash
+      run: |
+        issue_ref="${{ inputs.issue_url || inputs.issue_number }}"
+        issue=$(gh issue view -R "$GITHUB_REPOSITORY" --json "number" --json "title" --json "assignees" $issue_ref)
+        echo "number=$(echo $issue | jq -r '.number')" >> $GITHUB_OUTPUT
+        echo "title=$(echo $issue | jq -r '.title')" >> $GITHUB_OUTPUT
+        echo "login=$(echo $issue | jq -r '.assignees[0].login')" >> $GITHUB_OUTPUT
+      env:
+        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+        
     - name: Move to path of action
+      shell: bash
       run: |
         cd ${{ github.action_path }}
         pwd="$(pwd)"
         echo "local_action_path=$pwd" >> $GITHUB_ENV
-      shell: bash
-
+      
     - id: cache-cargo
       uses: actions/cache@v3
       with:
@@ -44,19 +57,15 @@ runs:
 
     - name: Install dependencies
       if: steps.cache-cargo.outputs.cache-hit != 'true'
+      shell: bash
       run: |
         cd ${{ github.action_path }}
         cargo install ccase
-      shell: bash
-    
+
     - name: run
       shell: bash
       run: |
         chmod +x "${{ env.local_action_path }}/src/pull-request.sh"
-        ${{ env.local_action_path }}/src/pull-request.sh -n $number -o $owner -e $email -i "${{ github.event.issue.title }}" -r $GITHUB_REPOSITORY -l $login
+        ${{ env.local_action_path }}/src/pull-request.sh -n "${{ steps.get-issue.outputs.number }}" -i "${{ steps.get-issue.outputs.title }}" -r $GITHUB_REPOSITORY -l "${{ steps.get-issue.outputs.login }}"
       env:
-        number: ${{ github.event.issue.number }}
-        owner: ${{ inputs.assignee }}
-        email: ${{ inputs.email }}
-        login: ${{ inputs.login }}
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}

@@ -23,7 +23,7 @@ jobs:
         if: ${{ startsWith(github.event.comment.body, '@pr ') }}
         uses: ./ # Uses an action in the root directory
         # or use a released GitHub Action
-        #uses: chyccs/pull-request-typography@master
+        #uses: chyccs/empty-pr-actions@master
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -31,6 +31,6 @@ jobs:
         if: ${{ !github.event.comment.body }}
         uses: ./ # Uses an action in the root directory
         # or use a released GitHub Action
-        #uses: chyccs/pull-request-typography@master
+        #uses: chyccs/empty-pr-actions@master
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
